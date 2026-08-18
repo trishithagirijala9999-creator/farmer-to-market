@@ -196,6 +196,9 @@ frontend:
         -working: true
         -agent: "testing"
         -comment: "✅ BUG FIX VERIFIED. Comprehensive testing completed: (1) Marketplace - ALL images load correctly: Paddy 12/12, Banana 2/2, Coconut 2/2, Vegetables 3/3, Sugarcane 1/1 (naturalWidth>0, no broken icons). (2) Category filters - All tested categories show correct real photographs matching produce types. (3) Product details - Large image (960px) renders correctly showing real paddy/rice field photograph, no crashes. (4) Console monitoring - ✅ NO 'primaryImage' ERRORS, ✅ NO 'Cannot read properties of undefined' ERRORS - critical bug FIXED. (5) Mobile viewport (390px) - No horizontal scrolling, all images render correctly. Real photographs from Wikimedia Commons confirmed. Image fallback chain working perfectly. Runtime stability verified across all flows."
+        -working: true
+        -agent: "testing"
+        -comment: "✅ RE-VERIFICATION AFTER DATA CHANGE COMPLETE. Tested with NEW seed data (11 products with direct image_url). RESULTS: (1) Marketplace - ALL 11 products display DISTINCT real photographs: BPT Sona Masoori Paddy (rice field), MTU-1010 Paddy (rice field), Karpooravalli Banana (bananas), Grand Naine Banana (bananas), Tender Coconut (coconuts), Fresh Brinjal (eggplant), Fresh Tomato (tomatoes), Co-86032 Sugarcane (sugarcane), Green Chilli (green chillies), Okra (okra pods), Spinach (leafy greens). All images loaded: 11/11 (naturalWidth>0). (2) Image verification - 9 distinct image types used, legitimate duplicates only (2 Paddy items share rice field, 2 Banana items share banana image - same category). NO inappropriate duplicates. NO emoji placeholders. NO broken icons. (3) Category filters - Tested All/Paddy/Banana/Coconut/Vegetables/Sugarcane - all images load correctly after filtering. (4) Product details - Verified Paddy, Coconut, Green Chilli detail pages - large images render correctly with real photographs matching produce type. (5) Console errors - ZERO 'primaryImage' errors, ZERO 'Cannot read properties of undefined' errors. Runtime stability confirmed. (6) Mobile 390px - NO horizontal scrolling, all images render correctly. Image fix fully verified with new data."
   - task: "Full SPA (hash routing, EN/TE, dashboards, marketplace, wishlist)"
     implemented: true
     working: "NA"
@@ -304,3 +307,55 @@ agent_communication:
       - Admin stats: farmers:3, buyers:2, products:13, orders:10, gmv:10060
       
       All backend APIs are working correctly with proper authentication, authorization, validation, and business logic.
+    -agent: "testing"
+    -message: |
+      ✅ IMAGE FIX RE-VERIFICATION COMPLETE - ALL TESTS PASSED
+      
+      Re-verified AgriDirect marketplace after DATA CHANGE (11 seeded products with direct image_url).
+      Comprehensive testing confirms all requirements met:
+      
+      TEST RESULTS:
+      1. ✅ Marketplace #/marketplace - ALL 11 products show DISTINCT real photographs:
+         - BPT Sona Masoori Paddy: Rice/paddy field (960x720, naturalWidth>0)
+         - MTU-1010 Paddy: Rice/paddy field (960x720, naturalWidth>0) [legitimate duplicate]
+         - Karpooravalli Banana: Bananas (960x640, naturalWidth>0)
+         - Grand Naine Banana: Bananas (960x640, naturalWidth>0) [legitimate duplicate]
+         - Tender Coconut: Coconuts (960x640, naturalWidth>0)
+         - Fresh Brinjal (Vankaya): Eggplant/brinjal (960x1048, naturalWidth>0)
+         - Fresh Tomato: Tomatoes (960x1005, naturalWidth>0)
+         - Co-86032 Sugarcane: Sugarcane (960x1200, naturalWidth>0)
+         - Green Chilli (Pachi Mirapakaya): Green chillies (960x720, naturalWidth>0)
+         - Okra / Lady Finger (Bendakaya): Okra pods (960x1280, naturalWidth>0)
+         - Spinach / Leafy Greens (Palakura): Leafy greens (960x720, naturalWidth>0)
+         
+         Images loaded: 11/11 (100%)
+         ✅ NO emoji placeholders
+         ✅ NO broken-image icons
+         ✅ Only legitimate duplicates (2 Paddy items, 2 Banana items - same category)
+         ✅ Different produce show different photos
+      
+      2. ✅ Category filters - All tested, images load correctly:
+         - Paddy: 2/2 images loaded
+         - Banana: 2/2 images loaded
+         - Coconut: 1/1 images loaded
+         - Vegetables: 5/5 images loaded (Brinjal, Tomato, Green Chilli, Okra, Spinach)
+         - Sugarcane: 1/1 images loaded
+      
+      3. ✅ Product details - Verified for Paddy, Coconut, Green Chilli:
+         - Large real images render correctly (naturalWidth>0)
+         - Green Chilli detail page shows real green chillies photograph
+         - No crashes on any product detail page
+      
+      4. ✅ Console errors - ZERO runtime errors:
+         - 'primaryImage' errors: 0
+         - 'Cannot read properties of undefined' errors: 0
+         - Total console errors: 0
+         - Runtime stability confirmed
+      
+      5. ✅ Mobile 390px viewport:
+         - NO horizontal scrolling
+         - All images render correctly
+         - Responsive layout working
+      
+      CONCLUSION: Image fix fully verified with new seed data. All 11 products display correct,
+      distinct real photographs matching their produce type. No runtime errors. System stable.

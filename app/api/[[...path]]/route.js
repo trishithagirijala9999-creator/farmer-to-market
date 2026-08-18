@@ -103,25 +103,41 @@ async function ensureSeed(db) {
   ])
 
   const produce = [
-    { category: 'Paddy', name: 'BPT Sona Masoori Paddy', name_te: 'బీపీటీ సోనా మసూరి వరి', price: 2100, unit: 'quintal', quantity: 80, quality: 'Grade A', farmer: farmers[0], desc: 'Freshly harvested Grade-A paddy, low moisture, ready for milling.' },
-    { category: 'Banana', name: 'Karpooravalli Banana', name_te: 'కర్పూరవల్లి అరటి', price: 28, unit: 'kg', quantity: 500, quality: 'Grade A', farmer: farmers[0], desc: 'Sweet, farm-fresh bananas harvested this week.' },
-    { category: 'Coconut', name: 'Tender Coconut', name_te: 'లేత కొబ్బరి', price: 22, unit: 'piece', quantity: 1200, quality: 'Standard', farmer: farmers[1], desc: 'Naturally grown tender coconuts, bulk available.' },
-    { category: 'Vegetables', name: 'Fresh Brinjal (Vankaya)', name_te: 'తాజా వంకాయ', price: 30, unit: 'kg', quantity: 200, quality: 'Organic', farmer: farmers[1], desc: 'Pesticide-controlled brinjal, picked daily.' },
-    { category: 'Sugarcane', name: 'Co-86032 Sugarcane', name_te: 'చెరకు Co-86032', price: 350, unit: 'quintal', quantity: 150, quality: 'Grade A', farmer: farmers[0], desc: 'High-yield sugarcane variety, good sucrose content.' },
-    { category: 'Vegetables', name: 'Tomato (Tomato)', name_te: 'టమోటా', price: 24, unit: 'kg', quantity: 300, quality: 'Grade B', farmer: farmers[1], desc: 'Ripe, firm tomatoes ideal for wholesale.' },
-    { category: 'Paddy', name: 'MTU-1010 Paddy', name_te: 'ఎంటీయూ-1010 వరి', price: 1980, unit: 'quintal', quantity: 120, quality: 'Grade B', farmer: farmers[1], desc: 'Medium slender variety, well dried.' },
-    { category: 'Banana', name: 'Grand Naine Banana', name_te: 'గ్రాండ్ నైన్ అరటి', price: 25, unit: 'kg', quantity: 600, quality: 'Grade A', farmer: farmers[0], desc: 'Export-quality bananas, uniform size.' },
+    { category: 'Paddy', name: 'BPT Sona Masoori Paddy', name_te: 'బీపీటీ సోనా మసూరి వరి', price: 2100, unit: 'quintal', quantity: 80, quality: 'Grade A', img: 'paddy', farmer: farmers[0], desc: 'Freshly harvested Grade-A paddy, low moisture, ready for milling.' },
+    { category: 'Banana', name: 'Karpooravalli Banana', name_te: 'కర్పూరవల్లి అరటి', price: 28, unit: 'kg', quantity: 500, quality: 'Grade A', img: 'banana', farmer: farmers[0], desc: 'Sweet, farm-fresh bananas harvested this week.' },
+    { category: 'Coconut', name: 'Tender Coconut', name_te: 'లేత కొబ్బరి', price: 22, unit: 'piece', quantity: 1200, quality: 'Standard', img: 'coconut', farmer: farmers[1], desc: 'Naturally grown tender coconuts, bulk available.' },
+    { category: 'Vegetables', name: 'Fresh Brinjal (Vankaya)', name_te: 'తాజా వంకాయ', price: 30, unit: 'kg', quantity: 200, quality: 'Organic', img: 'brinjal', farmer: farmers[1], desc: 'Pesticide-controlled brinjal, picked daily.' },
+    { category: 'Sugarcane', name: 'Co-86032 Sugarcane', name_te: 'చెరకు Co-86032', price: 350, unit: 'quintal', quantity: 150, quality: 'Grade A', img: 'sugarcane', farmer: farmers[0], desc: 'High-yield sugarcane variety, good sucrose content.' },
+    { category: 'Vegetables', name: 'Fresh Tomato', name_te: 'తాజా టమోటా', price: 24, unit: 'kg', quantity: 300, quality: 'Grade B', img: 'tomato', farmer: farmers[1], desc: 'Ripe, firm tomatoes ideal for wholesale.' },
+    { category: 'Paddy', name: 'MTU-1010 Paddy', name_te: 'ఎంటీయూ-1010 వరి', price: 1980, unit: 'quintal', quantity: 120, quality: 'Grade B', img: 'paddy', farmer: farmers[1], desc: 'Medium slender variety, well dried.' },
+    { category: 'Banana', name: 'Grand Naine Banana', name_te: 'గ్రాండ్ నైన్ అరటి', price: 25, unit: 'kg', quantity: 600, quality: 'Grade A', img: 'banana', farmer: farmers[0], desc: 'Export-quality bananas, uniform size.' },
+    { category: 'Vegetables', name: 'Green Chilli (Pachi Mirapakaya)', name_te: 'పచ్చి మిరపకాయ', price: 40, unit: 'kg', quantity: 120, quality: 'Grade A', img: 'chilli', farmer: farmers[1], desc: 'Fresh spicy green chillies, hand-picked.' },
+    { category: 'Vegetables', name: 'Okra / Lady Finger (Bendakaya)', name_te: 'బెండకాయ', price: 35, unit: 'kg', quantity: 150, quality: 'Grade A', img: 'okra', farmer: farmers[0], desc: 'Tender green okra, harvested this morning.' },
+    { category: 'Vegetables', name: 'Spinach / Leafy Greens (Palakura)', name_te: 'పాలకూర', price: 18, unit: 'kg', quantity: 90, quality: 'Organic', img: 'spinach', farmer: farmers[1], desc: 'Fresh leafy spinach bunches, organically grown.' },
   ]
   await db.collection('produce').insertMany(produce.map(p => ({
     id: uuidv4(), category: p.category, name: p.name, name_te: p.name_te,
     price: p.price, unit: p.unit, quantity: p.quantity, quality: p.quality, description: p.desc,
     farmer_id: p.farmer.id, farmer_name: p.farmer.name, contact: p.farmer.phone,
     village: p.farmer.village, mandal: p.farmer.mandal, location: p.farmer.location,
-    image_url: '', status: 'available', created_at: new Date(),
+    image_url: SEED_IMG[p.img] || '', status: 'available', created_at: new Date(),
   })))
 }
 
 const PRODUCE_FIELDS = ['category', 'name', 'name_te', 'unit', 'quality', 'description', 'contact', 'village', 'mandal', 'location', 'image_url', 'status']
+
+// Curated real-photo URLs used to seed demo listings (also mirrored on the frontend as fallbacks).
+const SEED_IMG = {
+  paddy: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Rice_Field_in_Merced%2C_Banate%2C_Iloilo.jpg/960px-Rice_Field_in_Merced%2C_Banate%2C_Iloilo.jpg',
+  banana: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/DFC_1274_Two_vendors_chat_behind_a_stall_piled_high_with_ripe_bananas_at_a_local_market.jpg/960px-DFC_1274_Two_vendors_chat_behind_a_stall_piled_high_with_ripe_bananas_at_a_local_market.jpg',
+  coconut: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Coconuts_-_single_and_cracked_open.jpg/960px-Coconuts_-_single_and_cracked_open.jpg',
+  brinjal: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Solanum_melongena_24_08_2012_%281%29.JPG/960px-Solanum_melongena_24_08_2012_%281%29.JPG',
+  sugarcane: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/U_S_Department_of_Agriculture_USDA_Agricultural_Research_Service_ARS_Sugarcane_Research_Unit_scientists_developed_and_released_a_new_high-fiber_variety_of_sugarcane%2C_or_energy_cane%2C_Ho_06-9002%2C_in_Houma%2C_LA%2C_a_%2820211213-ARS-LSC-1193%29.jpg/960px-thumbnail.jpg',
+  tomato: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Fresh_red_tomatoes.jpg/960px-Fresh_red_tomatoes.jpg',
+  chilli: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Green_chillies.jpg/960px-Green_chillies.jpg',
+  okra: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Okra.jpg/960px-Okra.jpg',
+  spinach: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/SPINACH_-GREEN_LEAVES_GO_GREEN_AND_ORGANIC.jpg/960px-SPINACH_-GREEN_LEAVES_GO_GREEN_AND_ORGANIC.jpg',
+}
 
 // ---------------- Route handler ----------------
 async function handleRoute(request, { params }) {
