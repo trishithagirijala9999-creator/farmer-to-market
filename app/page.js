@@ -473,18 +473,107 @@ function About({ t }) {
   )
 }
 
-// ---------------- Produce visual (image with emoji fallback) ----------------
-function ProduceVisual({ item, className = 'h-28', emojiClass = 'text-6xl' }) {
-  const meta = CAT_META[item?.category] || { emoji: '🌱', color: 'bg-stone-100 text-stone-700' }
-  const [err, setErr] = useState(false)
-  if (item?.image_url && !err) {
+// ---------------- Produce image resolution (real photographs) ----------------
+// Priority: farmer-uploaded photo -> exact produce photo -> category photo -> safe placeholder.
+// Curated, content-verified real photographs (Wikimedia Commons). Works for any current or future produce.
+const PRODUCE_IMAGES = {
+  banana: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/DFC_1274_Two_vendors_chat_behind_a_stall_piled_high_with_ripe_bananas_at_a_local_market.jpg/960px-DFC_1274_Two_vendors_chat_behind_a_stall_piled_high_with_ripe_bananas_at_a_local_market.jpg',
+  coconut: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Coconuts_-_single_and_cracked_open.jpg/960px-Coconuts_-_single_and_cracked_open.jpg',
+  sugarcane: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/U_S_Department_of_Agriculture_USDA_Agricultural_Research_Service_ARS_Sugarcane_Research_Unit_scientists_developed_and_released_a_new_high-fiber_variety_of_sugarcane%2C_or_energy_cane%2C_Ho_06-9002%2C_in_Houma%2C_LA%2C_a_%2820211213-ARS-LSC-1193%29.jpg/960px-thumbnail.jpg',
+  paddy: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/Rice_Field_in_Merced%2C_Banate%2C_Iloilo.jpg/960px-Rice_Field_in_Merced%2C_Banate%2C_Iloilo.jpg',
+  tomato: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Fresh_red_tomatoes.jpg/960px-Fresh_red_tomatoes.jpg',
+  brinjal: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/76/Solanum_melongena_24_08_2012_%281%29.JPG/960px-Solanum_melongena_24_08_2012_%281%29.JPG',
+  mango: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/fd/Ripe_mangoes.jpg/960px-Ripe_mangoes.jpg',
+  papaya: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Fresh_papaya_fruit.jpg/960px-Fresh_papaya_fruit.jpg',
+  guava: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/Guava_fruit_%28country%29.jpg/960px-Guava_fruit_%28country%29.jpg',
+  watermelon: 'https://upload.wikimedia.org/wikipedia/commons/7/75/Red_watermelon_%28Citrullus_lanatus_var._lanatus%29_in_Thailand.jpg',
+  pineapple: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Pineapple_and_cross_section.jpg/960px-Pineapple_and_cross_section.jpg',
+  orange: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Oranges_-_whole-halved-segment.jpg/960px-Oranges_-_whole-halved-segment.jpg',
+  pomegranate: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Pomegranate02_edit.jpg/960px-Pomegranate02_edit.jpg',
+  potato: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Patates.jpg/960px-Patates.jpg',
+  onion: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Red_Onion_on_White.JPG/960px-Red_Onion_on_White.JPG',
+  cabbage: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Fresh_green_cabbage_heads.jpg/960px-Fresh_green_cabbage_heads.jpg',
+  cauliflower: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Liat_Portal_for_Foodie_Disorder_-_Cauliflower_from_SF_farmers%27_market.jpg/960px-Liat_Portal_for_Foodie_Disorder_-_Cauliflower_from_SF_farmers%27_market.jpg',
+  okra: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/90/Okra.jpg/960px-Okra.jpg',
+  chilli: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Green_chillies.jpg/960px-Green_chillies.jpg',
+  bottle_gourd: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/Fresh_Bottle_Gourd_%28Lauki%29_from_Home_Garden.jpg/960px-Fresh_Bottle_Gourd_%28Lauki%29_from_Home_Garden.jpg',
+  bitter_gourd: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/01/Bittter_Melon_%285193855749%29.jpg/960px-Bittter_Melon_%285193855749%29.jpg',
+  drumstick: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/81/Moringa_oleifera_drumstick_pods.JPG/960px-Moringa_oleifera_drumstick_pods.JPG',
+  spinach: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/SPINACH_-GREEN_LEAVES_GO_GREEN_AND_ORGANIC.jpg/960px-SPINACH_-GREEN_LEAVES_GO_GREEN_AND_ORGANIC.jpg',
+  vegetables: 'https://upload.wikimedia.org/wikipedia/commons/7/7f/Assorted_Fresh_Vegetables.jpg',
+}
+// keyword (English + common Telugu) -> curated image key. More specific entries first.
+const PRODUCE_KEYWORDS = [
+  { k: ['bottle gourd', 'sorakaya', 'lauki'], key: 'bottle_gourd' },
+  { k: ['bitter gourd', 'kakarakaya', 'karela'], key: 'bitter_gourd' },
+  { k: ['lady finger', 'ladyfinger', 'okra', 'bhindi', 'bendakaya', 'benda'], key: 'okra' },
+  { k: ['green chilli', 'chilli', 'chili', 'mirchi', 'mirapa', 'mirapakaya'], key: 'chilli' },
+  { k: ['drumstick', 'munaga', 'moringa'], key: 'drumstick' },
+  { k: ['spinach', 'leafy', 'palakura', 'greens', 'koora'], key: 'spinach' },
+  { k: ['cauliflower', 'gobi'], key: 'cauliflower' },
+  { k: ['cabbage'], key: 'cabbage' },
+  { k: ['tomato', 'tamota'], key: 'tomato' },
+  { k: ['brinjal', 'eggplant', 'aubergine', 'vankaya'], key: 'brinjal' },
+  { k: ['potato', 'bangala', 'aloo'], key: 'potato' },
+  { k: ['onion', 'ullipaya'], key: 'onion' },
+  { k: ['mango', 'mamidi'], key: 'mango' },
+  { k: ['papaya', 'boppayi'], key: 'papaya' },
+  { k: ['guava', 'jama'], key: 'guava' },
+  { k: ['watermelon', 'puchakaya'], key: 'watermelon' },
+  { k: ['pineapple', 'anasa'], key: 'pineapple' },
+  { k: ['orange', 'batayi', 'kamala'], key: 'orange' },
+  { k: ['pomegranate', 'danimma'], key: 'pomegranate' },
+  { k: ['banana', 'arati', 'karpoora', 'naine'], key: 'banana' },
+  { k: ['coconut', 'kobbari'], key: 'coconut' },
+  { k: ['sugarcane', 'cheraku', 'cane'], key: 'sugarcane' },
+  { k: ['paddy', 'rice', 'vari', 'sona', 'masoori', 'mtu', 'bpt'], key: 'paddy' },
+]
+const CATEGORY_IMAGE_KEY = { Paddy: 'paddy', Banana: 'banana', Coconut: 'coconut', Sugarcane: 'sugarcane', Vegetables: 'vegetables' }
+
+function resolveCategoryImage(item) {
+  const hay = `${item?.name || ''} ${item?.name_te || ''}`.toLowerCase()
+  const match = PRODUCE_KEYWORDS.find(entry => entry.k.some(kw => hay.includes(kw)))
+  if (match && PRODUCE_IMAGES[match.key]) return PRODUCE_IMAGES[match.key]
+  const catKey = CATEGORY_IMAGE_KEY[item?.category]
+  if (catKey && PRODUCE_IMAGES[catKey]) return PRODUCE_IMAGES[catKey]
+  return PRODUCE_IMAGES.vegetables
+}
+function produceImageSources(item) {
+  const sources = []
+  const url = item?.image_url
+  if (url && typeof url === 'string' && /^https?:\/\//i.test(url.trim())) sources.push(url.trim())
+  sources.push(resolveCategoryImage(item))
+  sources.push(PRODUCE_IMAGES.vegetables)
+  // de-duplicate while preserving order
+  return sources.filter((s, i) => s && sources.indexOf(s) === i)
+}
+
+// ---------------- Produce visual (real photo with safe fallbacks) ----------------
+function ProduceVisual({ item, className = 'h-28' }) {
+  const safeItem = item || {}
+  const sources = produceImageSources(safeItem)
+  const [idx, setIdx] = useState(0)
+  useEffect(() => { setIdx(0) }, [safeItem.id, safeItem.image_url])
+  const exhausted = idx >= sources.length
+  const src = exhausted ? null : sources[idx]
+  if (!src) {
     return (
-      <div className={`${className} bg-stone-100 overflow-hidden`}>
-        <img src={item.image_url} alt={item?.name || 'produce'} onError={() => setErr(true)} className="w-full h-full object-cover" />
+      <div className={`${className} flex items-center justify-center bg-green-50 text-green-800 text-sm font-medium px-2 text-center`}>
+        {safeItem.name || 'Fresh Produce'}
       </div>
     )
   }
-  return <div className={`${className} flex items-center justify-center ${emojiClass} ${meta.color.split(' ')[0]}`}>{meta.emoji}</div>
+  return (
+    <div className={`${className} bg-stone-100 overflow-hidden`}>
+      <img
+        src={src}
+        alt={safeItem.name ? `${safeItem.name} — fresh produce` : 'Fresh produce'}
+        loading="lazy"
+        onError={() => setIdx(i => i + 1)}
+        className="w-full h-full object-cover"
+      />
+    </div>
+  )
 }
 
 // ---------------- Produce Card ----------------
