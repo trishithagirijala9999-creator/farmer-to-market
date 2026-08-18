@@ -1,4 +1,4 @@
-# 🌾 AgriDirect – West Godavari
+<img width="1260" height="1312" alt="WhatsApp Image 2026-08-18 at 10 49 42 AM" src="https://github.com/user-attachments/assets/d1de7f54-43af-4b9b-8e7a-63a94fddef11" /># 🌾 AgriDirect – West Godavari
 
 ### Direct Digital Marketplace for Farmers and Buyers
 
@@ -490,3 +490,8 @@ This project is currently intended for **academic and educational purposes**.
 If you find the project useful, consider giving the repository a ⭐ on GitHub.
 
 **AgriDirect – Connecting Farmers Directly to Their Markets. 🌾**
+
+## 🚀 Live Demo
+
+[Farmer-to-Market Live Website](https://farmer-to-market-knkm.vercel.app/)
+
